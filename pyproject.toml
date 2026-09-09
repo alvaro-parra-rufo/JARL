@@ -1,0 +1,285 @@
+[project]
+name = "jarl"
+version = "0.1.0"
+description = "Library for LLM-driven RL algorithms in JAX."
+readme = "README.md"
+authors = [
+    { name = "Alvaro Parra", email = "alvaro.parra.rufo@gmail.com" }
+]
+requires-python = ">=3.12"
+
+# ----------------------------------------------- Runtime Dependencies ----------------------------------------------- #
+
+dependencies = [
+    "flax~=0.12.7",
+    "jax[cuda13]~=0.10.0",
+    "optax~=0.2.8",
+    "orbax-checkpoint~=0.11.37",
+    "tensorboard~=2.20.0",
+    "matplotlib~=3.10.9",
+    "ml-collections~=1.1",
+    "pydantic>=2.13.4",
+    "torch>=2.12.0",
+    "gymnasium>=1.3.0",
+    "minigrid>=3.1.0",
+    "numpy>=2.4.6",
+    "pandas>=3.0.3",
+    "tqdm>=4.67.3",
+    "wandb>=0.27.0",
+    "moviepy>=2.2.1",
+    "navix @ git+https://github.com/epignatelli/navix.git@479950893429a1338bc71129e22348199926dfa8",
+    "pyyaml>=6.0.3",
+]
+
+[project.optional-dependencies]
+examples = [
+    "ipykernel~=7.2",
+    "ipympl~=0.10",
+    "ipywidgets~=8.1",
+]
+
+tensorflow = [
+    "tensorflow==2.21.0",
+    "tensorflow-datasets==4.9.9",
+    "protobuf==6.33.6"
+]
+app = [
+    "streamlit>=1.58.0",
+]
+agentic = [
+    "langgraph>=0.4.0",
+    "langgraph-checkpoint-sqlite>=3.1.0",
+    "langchain-ollama>=0.3.0",
+    "langchain-openai>=0.3.0",
+    "langchain-core>=0.3.0",
+    "langchain>=1.3.14",
+]
+mcp = [
+    "jarl[agentic]",
+    "mcp>=1.21.0,<2",  # FastMCP lives in mcp 1.x; 2.x renamed it to MCPServer
+]
+
+all = [
+    "jarl[examples, tensorflow, app, agentic, mcp]",
+]
+
+[dependency-groups]
+dev = [
+    { include-group = "tests" },
+    { include-group = "docs" },
+    { include-group = "lint" },
+    "jarl[all]",
+]
+
+lint = [
+    "ruff==0.15.14",
+    "pyright~=1.1",
+]
+
+tests = [
+    "pre-commit~=4.6",
+    "pytest~=9.0",
+    "pytest-mock~=3.15",
+    "pytest-xdist~=3.8",
+]
+
+docs = [
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/jarl"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/jarl/agentic/llm/profiles/catalog.ollama.example.yaml" = "jarl/agentic/llm/profiles/catalog.ollama.example.yaml"
+"src/jarl/agentic/llm/profiles/catalog.openai_compatible.example.yaml" = "jarl/agentic/llm/profiles/catalog.openai_compatible.example.yaml"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/jarl",
+    "tests",
+    "pyproject.toml",
+    "README.md",
+]
+
+# ------------------------------------------------- Linter Settings -------------------------------------------------- #
+
+[tool.pyright]
+exclude = [
+    "**/__pycache__",
+    "**/.venv*",
+    "**/.*",
+    "**/build",
+]
+venvPath = "."
+venv = ".venv"
+analyzeUnannotatedFunctions = false
+pythonVersion = "3.12"
+typeCheckingMode = "off"
+extraPaths = ["src"]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py312"
+fix = true
+exclude = [
+    ".git",
+    ".ipynb_checkpoints",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "dist",
+    "_build",
+    "build",
+    "site-packages",
+    "node_modules",
+]
+extend-include = ["*.ipynb"]
+
+
+[tool.ruff.lint]
+select = [
+    "A",    # flake8-builtins: prevent shadowing of Python built-in names
+    "ANN",  # flake8-annotations: enforce type hints and annotations
+    "ARG",  # flake8-unused-arguments: unused parameters in signatures
+    "B",    # flake8-bugbear: likely bugs and questionable patterns
+    "C4",   # flake8-comprehensions: idiomatic list/dict/set comprehensions
+    "D",    # pydocstyle: docstring formatting and completeness
+    "E",    # pycodestyle errors: PEP 8 style violations
+    "ERA",  # eradicate: detect commented-out dead code
+    "F",    # Pyflakes: dead code, undefined names, unused imports
+    "FA",   # flake8-future-annotations: prefer postponed annotation evaluation
+    "I",    # isort: consistent import ordering
+    "NPY",  # NumPy-specific linting for API usage and deprecations
+    "PERF", # Perflint: micro-optimizations and inefficient constructs
+    "PLC",  # Pylint conventions: naming and stylistic consistency
+    "PLE",  # Pylint errors: patterns that may fail at runtime
+    "PLR",  # Pylint refactor: maintainability and complexity smells
+    "RET",  # flake8-return: consistent and clear return handling
+    "RUF",  # Ruff-native rules beyond upstream flake8 plugins
+    "S",    # flake8-bandit: basic security anti-patterns
+    "SIM",  # flake8-simplify: suggest simpler equivalent expressions
+    "T20",  # flake8-print: flag print/debug output in production code
+    "TID",  # flake8-tidy-imports: discourage messy import patterns
+    "UP",   # pyupgrade: prefer syntax available in newer Python versions
+    "W",    # pycodestyle warnings: non-blocking PEP 8 issues
+]
+ignore = [
+    "ANN002",   # Permit *args without explicit type annotations
+    "ANN003",   # Permit **kwargs without explicit type annotations
+    "ANN401",   # Permit Any as a parameter type
+    "D100",     # Module-level docstrings not required on public packages
+    "E501",     # Do not enforce maximum line length via pycodestyle
+    "PLC0415",  # Permit non-top-level imports (e.g. breaking circular deps)
+    "PLR0913",  # Permit functions with a large parameter count
+    "RUF015"    # Permit list(...)[0] instead of next(iter(...))
+]
+
+# Every selected rule may be auto-fixed when ruff runs with --fix.
+fixable = ["ALL"]
+# unfixable = ["RUF100"]
+
+# Underscore-prefixed names may remain unused without triggering lint noise.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+ignore-init-module-imports = true
+
+[tool.ruff.lint.per-file-ignores]
+# Loosen selected rules inside the test suite
+"tests/*" = [
+    "D10",      # Docstring requirements relaxed in tests
+    "PLR2004",  # Literal comparison values allowed in assertions
+    "S101",     # assert is permitted in test code
+    "S603",     # subprocess invocation allowed in tests
+]
+# Loosen selected rules inside Jupyter notebooks
+"**/*.ipynb" = [
+    "E402",  # imports may appear after setup cells (e.g. sys.path tweaks)
+    "T201",  # print allowed for exploratory notebook output
+    "ERA001",  # optional snippets are often left commented in notebooks
+    "S603",  # notebooks may shell out for local launchers
+    "S310",  # local health checks may use urllib
+]
+"examples/**" = [
+    "D100",  # example scripts are not treated as public library modules
+    "T201",  # print allowed in example scripts
+]
+"src/jarl/app/**" = [
+    "S603",
+    "PLR0915",  # Streamlit page shells are intentionally statement-dense
+]
+"src/jarl/agents/**" = [
+    "PLR0915",  # JIT training loops are intentionally dense
+]
+"scripts/**" = [
+    "T201",  # print allowed in CLI scripts
+]
+# "*/__init__.py" = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google" # Docstrings follow the Google convention
+
+[tool.ruff.lint.isort]
+known-local-folder = ["src"]
+known-first-party = ["jarl", "project", "notebook_utils", "tests", "test_*"]
+force-wrap-aliases = true
+split-on-trailing-comma = true
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.typos.default]
+extend-ignore-identifiers-re = [
+    "^[0-9a-f]{8}$",  # eight-character hex tokens (common in notebook metadata)
+]
+
+[tool.typos.default.extend-words]
+# Preserve these spellings during typo scanning
+arange = "arange"  # keep numpy.arange; do not rewrite to numpy.arrange
+gae = "gae"  # Generalized Advantage Estimation (RL hyperparameter prefix)
+
+[tool.typos.default.extend-identifiers]
+# Preserve these symbol names in CamelCase and snake_case
+# CamelCase = "CamelCase"
+
+# ============================================== Test runner configuration ============================================== #
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers -n3 -m 'not slow and not llm'"
+markers = [
+    "slow: Run slow tests",
+    "unit: Run unit tests",
+    "integration: Run integration tests",
+    "functional: Run functional tests",
+    "llm_eval: Agentic tool contract and behavior eval suite",
+    "test_helpers: Run tests for test helpers",
+    "gpu: Requires tests requiring GPU",
+    "llm: Requires a real local or remote LLM provider",
+]
+# filterwarnings = [
+#     "ignore::DeprecationWarning",
+#     "ignore::UserWarning",
+# ]
+
+[tool.coverage.run]
+source = ["src"]
+relative_files = true  # normalize paths so diff-cover can align reports with diffs
+branch = true  # track conditional branches, not only executed lines
+omit = ["tests/**"]  # exclude the test tree from coverage measurement
+
+[tool.coverage.report]
+include = ["src/**/*.py"]
+skip_empty = true  # drop files that contain no executable statements
+skip_covered = true  # hide 100% covered files to reduce report noise
+show_missing = false  # line gaps are surfaced by the diff coverage tooling instead
+fail_under = 0  # minimum acceptable total coverage percentage (0–100)
+precision = 2  # number of decimal places shown in coverage percentages

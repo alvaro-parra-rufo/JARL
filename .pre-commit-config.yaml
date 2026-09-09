@@ -1,0 +1,35 @@
+exclude: ^docs/
+repos:
+  - repo: local
+    hooks:
+      - id: uv-lock-check
+        name: Check lockfile is up to date
+        entry: uv lock --locked
+        language: system
+        pass_filenames: false
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.15.14
+    hooks:
+      - id: ruff-check
+        args: [--fix, --config=pyproject.toml]
+      - id: ruff-format
+        args: [--config=pyproject.toml]
+  # - repo: https://github.com/crate-ci/typos
+  #   rev: v1.46.3
+  #   hooks:
+  #     - id: typos
+  #       args: [--config=pyproject.toml, --isolated, --write-changes]

@@ -1,0 +1,15 @@
+name: medium
+description: Full showcase tree with reduced production timesteps.
+wandb_mode: offline
+timesteps_root: 100_000
+timesteps_default: 50_000
+timesteps_transfer: 200_000
+nr_envs: 16
+nr_steps: 64
+minibatch_size: 512
+nr_epochs: 3
+eval_frequency: 8_192
+checkpoint_save_interval_steps: 8_192
+record_video: false
+record_final_video: true
+active_nodes: null

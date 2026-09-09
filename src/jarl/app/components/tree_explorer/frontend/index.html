@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JARL Tree Explorer</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="toolbar">
+      <input id="search" type="search" placeholder="Buscar id de nodo…" />
+      <div id="zoom-controls">
+        <button type="button" id="zoom-out" title="Alejar">-</button>
+        <span id="zoom-label">100%</span>
+        <button type="button" id="zoom-in" title="Acercar">+</button>
+        <button type="button" id="layout-toggle" title="Cambiar a vista horizontal" aria-pressed="false">↔</button>
+        <button type="button" id="focus-current" title="Centrar nodo activo">⌖</button>
+        <button type="button" id="zoom-reset" title="Restablecer zoom">⟲</button>
+      </div>
+    </div>
+    <div id="viewport">
+      <div id="canvas"></div>
+    </div>
+    <div id="tooltip" hidden></div>
+    <div id="selection-hint" hidden></div>
+    <menu id="context-menu" hidden>
+      <button type="button" data-action="checkout">Checkout nodo</button>
+      <button type="button" data-action="goto_launch">Ir a Lanzar</button>
+      <button type="button" data-action="goto_continue">Ir a Continuar</button>
+    </menu>
+    <script src="tree_explorer.js"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+# Documentation example — not loaded by the LLM catalog.
+# Copy to ``default.yaml`` (Ollama baseline) or ``custom.yaml`` (multi-profile) and edit.
+# OpenAI-compatible variant: ``catalog.openai_compatible.example.yaml``.
+#
+# Precedence for assignments: exact id > longest prefix/* > fallback.
+# fallback has no main/subagent meaning; it is only used when nothing matches.
+
+defaults:
+  provider: ollama
+  base_url: http://localhost:11434
+
+profiles:
+  powerful:
+    model: qwen2.5:32b
+  cheap:
+    model: qwen2.5:7b
+  metrics_analysis:
+    model: qwen2.5:7b
+
+assignments:
+  main: powerful
+  "subagents/*": cheap
+  subagents/metrics_analysis: metrics_analysis
+
+fallback: cheap

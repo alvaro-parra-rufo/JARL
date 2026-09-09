@@ -1,0 +1,134 @@
+# Default showcase scenario: 11-node Navix curriculum tree.
+name: jarl-showcase
+# Trainer for all nodes: ppo | ppo_gru (overridable with CLI --algorithm).
+algorithm: ppo
+description: >
+  Baseline and refine on Empty-5x5, LR/rollout demo forks, then a linear transfer spine
+  from main_extend (Empty 6x6 -> 8x8 -> DoorKey 5x5 -> 6x6 -> 8x8) tuned for return 1.0.
+
+anchors:
+  # Empty map changes: child_start often already solves the map — avoid PPO unlearning.
+  transfer_empty_finetune: &transfer_empty_finetune
+    algorithm.learning_rate: 3.0e-5
+    algorithm.anneal_learning_rate: false
+    algorithm.entropy_coef: 0.01
+    algorithm.clip_range: 0.1
+    algorithm.nr_epochs: 2
+
+  # DoorKey: new mechanics — more exploration and a standard fine-tune LR.
+  transfer_doorkey_finetune: &transfer_doorkey_finetune
+    algorithm.learning_rate: 1.0e-4
+    algorithm.anneal_learning_rate: false
+    algorithm.entropy_coef: 0.12
+    algorithm.clip_range: 0.2
+
+nodes:
+  - logical_name: baseline_empty5
+    parent: null
+    action: root
+    branch: main
+    label: baseline
+    env_id: Navix-Empty-5x5-v0
+    checkpoint_alias: null
+    overrides: {}
+
+  - logical_name: main_extend_empty5
+    parent: baseline_empty5
+    action: extend
+    branch: main
+    label: refine
+    env_id: Navix-Empty-5x5-v0
+    checkpoint_alias: latest
+    overrides: {}
+
+  - logical_name: empty5_lr_low
+    parent: main_extend_empty5
+    action: fork
+    branch: lr_low
+    label: lr_low
+    env_id: Navix-Empty-5x5-v0
+    checkpoint_alias: best
+    overrides:
+      algorithm.learning_rate: 1.0e-4
+
+  - logical_name: empty5_lr_high
+    parent: main_extend_empty5
+    action: fork
+    branch: lr_high
+    label: lr_high
+    env_id: Navix-Empty-5x5-v0
+    checkpoint_alias: best
+    overrides:
+      algorithm.learning_rate: 3.0e-4
+
+  - logical_name: empty5_rollout_compact
+    parent: empty5_lr_low
+    action: fork
+    branch: rollout_compact
+    label: rollout_compact
+    env_id: Navix-Empty-5x5-v0
+    checkpoint_alias: best
+    overrides:
+      algorithm.nr_steps: 32
+      algorithm.minibatch_size: 256
+
+  - logical_name: empty5_rollout_wide
+    parent: empty5_lr_high
+    action: fork
+    branch: rollout_wide
+    label: rollout_wide
+    env_id: Navix-Empty-5x5-v0
+    checkpoint_alias: best
+    overrides:
+      algorithm.nr_steps: 128
+      algorithm.minibatch_size: 2048
+
+  - logical_name: transfer_empty6
+    parent: main_extend_empty5
+    action: fork
+    branch: transfer_spine
+    label: transfer_empty6
+    env_id: Navix-Empty-6x6-v0
+    checkpoint_alias: best
+    overrides:
+      <<: *transfer_empty_finetune
+
+  - logical_name: transfer_empty8
+    parent: transfer_empty6
+    action: extend
+    branch: transfer_spine
+    label: transfer_empty8
+    env_id: Navix-Empty-8x8-v0
+    checkpoint_alias: best
+    overrides:
+      <<: *transfer_empty_finetune
+
+  - logical_name: transfer_doorkey5
+    parent: transfer_empty8
+    action: extend
+    branch: transfer_spine
+    label: transfer_doorkey5
+    env_id: Navix-DoorKey-5x5-v0
+    checkpoint_alias: best
+    overrides:
+      <<: *transfer_doorkey_finetune
+
+  - logical_name: transfer_doorkey6
+    parent: transfer_doorkey5
+    action: extend
+    branch: transfer_spine
+    label: transfer_doorkey6
+    env_id: Navix-DoorKey-6x6-v0
+    checkpoint_alias: best
+    overrides:
+      <<: *transfer_doorkey_finetune
+
+  - logical_name: transfer_doorkey8
+    parent: transfer_doorkey6
+    action: extend
+    branch: transfer_spine
+    label: transfer_doorkey8
+    env_id: Navix-DoorKey-8x8-v0
+    checkpoint_alias: best
+    overrides:
+      <<: *transfer_doorkey_finetune

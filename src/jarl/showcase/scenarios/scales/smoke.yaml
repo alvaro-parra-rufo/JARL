@@ -1,0 +1,18 @@
+name: smoke
+description: CI/dev subtree with minimal timesteps.
+wandb_mode: offline
+timesteps_root: 512
+timesteps_default: 256
+timesteps_transfer: 512
+nr_envs: 4
+nr_steps: 8
+minibatch_size: 32
+nr_epochs: 1
+eval_frequency: 128
+checkpoint_save_interval_steps: 128
+record_video: false
+record_final_video: true
+active_nodes:
+  - baseline_empty5
+  - main_extend_empty5
+  - empty5_lr_low

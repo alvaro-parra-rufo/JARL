@@ -1,0 +1,33 @@
+# Documentation example — not loaded by the LLM catalog.
+# Copy to ``default.yaml`` or ``custom.yaml`` in this directory (gitignored) and edit.
+# Prefer env vars for secrets when possible; ``api_key`` below shows the field.
+#
+# Precedence for assignments: exact id > longest prefix/* > fallback.
+# fallback has no main/subagent meaning; it is only used when nothing matches.
+
+defaults:
+  provider: openai_compatible
+  base_url: https://api.openai.com/v1
+
+profiles:
+  openai:
+    model: gpt-4o
+    api_key: sk-REPLACE_ME
+  powerful:
+    model: gpt-4o
+    api_key: sk-REPLACE_ME
+  cheap:
+    model: gpt-4o-mini
+    api_key: sk-REPLACE_ME
+    temperature: 0.2
+  metrics_analysis:
+    model: gpt-4o-mini
+    api_key: sk-REPLACE_ME
+    temperature: 0.0
+
+assignments:
+  main: openai
+  "subagents/*": cheap
+  subagents/metrics_analysis: metrics_analysis
+
+fallback: cheap

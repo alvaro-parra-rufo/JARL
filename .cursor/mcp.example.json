@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "jarl": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${workspaceFolder}",
+        "python",
+        "-m",
+        "jarl.mcp"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "JARL_MCP_EXPERIMENT_DIR": "${workspaceFolder}/results/cmp/jarl",
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}

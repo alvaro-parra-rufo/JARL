@@ -1,0 +1,15 @@
+name: large
+description: Production-scale demo for TFM presentation.
+wandb_mode: online
+timesteps_root: 2_000_000
+timesteps_default: 1_000_000
+timesteps_transfer: 3_000_000
+nr_envs: 64
+nr_steps: 128
+minibatch_size: 2048
+nr_epochs: 4
+eval_frequency: 32_768
+checkpoint_save_interval_steps: 32_768
+record_video: true
+record_final_video: true
+active_nodes: null
